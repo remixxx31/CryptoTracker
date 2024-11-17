@@ -1,0 +1,58 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        failure_transport: failed
+        buses:
+             command_bus:
+                 middleware:
+                     - doctrine_ping_connection
+                     - router_context
+
+        transports:
+            failed: 'doctrine://default?queue_name=failed'
+            async:
+                dsn: '%env(RABBITMQ_URL)%'
+                retry_strategy:
+                    max_retries: 0
+
+        routing:
+            # Route your messages to the transports
+            # 'App\Message\YourMessage': async
+
+when@test:
+   framework:
+       messenger:
+           transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+               async: 'in-memory://'
+
+
+# framework:
+#     messenger:
+#         buses:
+#             command_bus:
+#                 middleware:
+#                     - doctrine_ping_connection
+#                     - router_context
+#         failure_transport: failed
+
+#         transports:
+#             failed: 'doctrine://default?queue_name=failed'
+#             async:
+#                 dsn: '%env(RABBITMQ_URL)%'
+#                 retry_strategy:
+#                     max_retries: 0
+
+#         routing:
+#             'App\Message\Source\ScrapSourceMessage': async
+#             'App\Message\ExternalPack\SyncExternalPackTrainingMessage': async
+#             'App\Message\ExternalPack\DeleteExternalPackTrainingMessage': async
+
+# # replace with your transport name here (e.g., my_transport: 'in-memory://')
+# # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+# when@test:
+#     framework:
+#         messenger:
+#             transports:
+#                 async: 'in-memory://'
